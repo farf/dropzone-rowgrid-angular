@@ -2,13 +2,23 @@
     <head>
         <meta charset="UTF-8">
         <title>Dropzone - Rowgrid - Angular</title>
+
+        <link rel="stylesheet" type="text/css" href="css/main.css">
+        <link rel="stylesheet" type="text/css" href="vendors/dropzone/downloads/css/dropzone.css">
     </head>
 
-    <body ng-app>
-        <h1>{{title}}</h1>
-        <input type='text'/ ng-model="title">
+    <body ng-app='myApp' ng-controller="AppCtrl as app">
+
+        <form action="/file-upload" ng-dropzone class='dropzone'></form>
+        <h1>{{city}}</h1>
+        <div ng-repeat='t in files'>{{t}}</div>
+
     </body>
-
+    <script type="text/javascript" src='vendors/jquery/dist/jquery.min.js'></script>
     <script type="text/javascript" src="vendors/angular/angular.min.js"></script>
+    <script type="text/javascript" src="vendors/dropzone/downloads/dropzone.js"></script>
+    <script type="text/javascript" src="js/dropzone.js"></script>
+    <script type="text/javascript" src="js/sparkline.js"></script>
 
+    <script type="text/javascript" src="js/main.js"></script>
 </html>
