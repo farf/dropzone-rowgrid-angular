@@ -3,11 +3,13 @@
 }
 
 .dj-container {
-    background-color: blue;
 }
 
 .test {
-    background-color: green;
     width: 100px;
     height: 100px;
+}
+
+img {
+    /*margin:2px;*/
 }
