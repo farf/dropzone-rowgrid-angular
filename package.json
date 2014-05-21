@@ -1,0 +1,28 @@
+{
+  "name": "dropzone-rowgrid-angular",
+  "version": "0.0.0",
+  "description": "dropzone-rowgrid-angular ========================",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/farf/dropzone-rowgrid-angular.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/farf/dropzone-rowgrid-angular/issues"
+  },
+  "homepage": "https://github.com/farf/dropzone-rowgrid-angular",
+  "devDependencies": {
+    "connect-livereload": "^0.4.0",
+    "gulp": "^3.6.2",
+    "tiny-lr": "0.0.7"
+  },
+  "dependencies": {
+    "connect": "^2.16.2",
+    "express": "^4.2.0"
+  }
+}

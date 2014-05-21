@@ -4,21 +4,45 @@
         <title>Dropzone - Rowgrid - Angular</title>
 
         <link rel="stylesheet" type="text/css" href="css/main.css">
+        <link rel="stylesheet" type="text/css" href="css/divjustify.css">
         <link rel="stylesheet" type="text/css" href="vendors/dropzone/downloads/css/dropzone.css">
     </head>
 
     <body ng-app='myApp' ng-controller="AppCtrl as app">
 
-        <form action="/file-upload" ng-dropzone class='dropzone'></form>
-        <h1>{{city}}</h1>
-        <div ng-repeat='t in files'>{{t}}</div>
+    <div class='dj-container'>
+        <div class="test dj-child"></div>
+        <div class="test dj-child"></div>
+        <div class="test dj-child"></div>
+        <div class="test dj-child"></div>
+        <div class="test dj-child"></div>
+        <div class="test dj-child"></div>
+        <div class="test dj-child"></div>
+        <div class="test dj-child"></div>
+        <div class="test dj-child"></div>
+        <div class="test dj-child"></div>
+        <div class="test dj-child"></div>
+        <span class="stretch"></span>
+    </div>
+
+
+        <div class='dj-container' ng-justify-div>
+            <span ng-repeat="image in images">
+                <div class='test dj-child'  data-width="{{image.width}}" data-height="{{image.height}}" style="width:{{image.width}}px; height:{{image.height}}"></div>
+            </span>
+            <span class="stretch"></span>
+        </div>
+
 
     </body>
     <script type="text/javascript" src='vendors/jquery/dist/jquery.min.js'></script>
     <script type="text/javascript" src="vendors/angular/angular.min.js"></script>
     <script type="text/javascript" src="vendors/dropzone/downloads/dropzone.js"></script>
+    <script type="text/javascript" src="vendors/linear-partition/dist/linear_partition.js"></script>
+    <script type="text/javascript" src="vendors/underscore/underscore.js"></script>
+
     <script type="text/javascript" src="js/dropzone.js"></script>
-    <script type="text/javascript" src="js/sparkline.js"></script>
+    <script type="text/javascript" src="js/justifydiv.js"></script>
 
     <script type="text/javascript" src="js/main.js"></script>
 </html>

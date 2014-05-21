@@ -1,6 +1,13 @@
+.dz-preview {
+    display: none;
+}
+
+.dj-container {
+    background-color: blue;
+}
+
 .test {
-    background-color: red;
+    background-color: green;
     width: 100px;
     height: 100px;
-    float: left;
 }

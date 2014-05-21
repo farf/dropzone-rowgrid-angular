@@ -1,0 +1,22 @@
+.dj-container {
+
+    text-align: justify;
+    -ms-text-justify: distribute-all-lines;
+    text-justify: distribute-all-lines;
+}
+
+.dj-child {
+    vertical-align: top;
+    display: inline-block;
+    *display: inline;
+    zoom: 1
+    box-sizing:border-box;
+}
+
+
+.stretch {
+    width: 100%;
+    display: inline-block;
+    font-size: 0;
+    line-height: 0
+}
