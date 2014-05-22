@@ -27,39 +27,49 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
             weights = _.map(ret, function(p) {
                 return parseInt(p.ratio * 100);
             });
-            console.log('weights');
-            console.log(weights);
-            console.log(weights.length);
-            console.log('rows');
-            console.log(rows);
             partition = linearPartition.run(weights, rows);
-            console.log('partition');
-            console.log(partition);
             index = 0;
+            var indexLine = 0
             _.each(partition, function(row) {
-                var summed_ratios = 0;
+                var indexInLine = 0;
+                var sum_ratios_line = 0;
                 i = index;
                 _.each(row, function(div) {
-                    summed_ratios += ret[i++].ratio;
+                    sum_ratios_line += ret[i++].ratio;
                 });
+                var sum_ratio = 0;
                 _.each(row, function(photo, i) {
-                    ret[index].width = parseInt(width / summed_ratios * ret[index].ratio);
-                    ret[index].height = parseInt(width / summed_ratios);
+                    $.extend(ret[index], {
+                        // difference is a way to remove the problem of one pixel because of round to integer :)
+                        newWidth : parseInt( width / sum_ratios_line * (sum_ratio + ret[index].ratio)) - parseInt( width / sum_ratios_line * sum_ratio),
+                        newHeight : parseInt(width / sum_ratios_line),
+                        summedRatios : sum_ratios_line,
+                        line: indexLine,
+                        indexInLine : indexInLine,
+                        first_element_line: (indexInLine == 0 ? 1 : 0),
+                        last_element_line: (indexInLine == row.length - 1 ? 1 : 0)
+                    });
+                    sum_ratio += ret[index].ratio;
                     index ++;
+                    indexInLine ++;
                 });
+                indexLine ++;
                 return;
             });
         }
-        console.log('after');
         console.log(ret);
         return ret;
+    }
+
+    this.getWidth = function() {
+
     }
 
     this.resize = function(el, height) {
         var divs = this.getSize(el);
         var width = $(el).width();
         if (!height) {
-            height = Math.round($(window).height() / 2);
+            height = Math.round($(window).height() / 3);
         }
 
         var start = new Date().getTime();
@@ -71,8 +81,8 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
         console.log('execution time: ' + time);
 
         $(el).find('.dj-child').each(function(index, child) {
-            $(child).height(divs[index].height);
-            $(child).width(divs[index].width);
+            $(child).height(divs[index].newHeight);
+            $(child).width(divs[index].newWidth);
         });
     }
 
