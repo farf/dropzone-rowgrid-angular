@@ -1,4 +1,4 @@
-angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout', function($window, $timeout) {
+angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout', 'linearPartition', function($window, $timeout, linearPartition) {
     this.containerHeight = 0;
     this.checkForChanges = function(el) {
         if ($(el).height() != containerHeight) {
@@ -32,7 +32,7 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
             console.log(weights.length);
             console.log('rows');
             console.log(rows);
-            partition = linear_partition(weights, rows);
+            partition = linearPartition.run(weights, rows);
             console.log('partition');
             console.log(partition);
             index = 0;
@@ -56,18 +56,7 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
     }
 
     this.resize = function(el, height) {
-        this.getSize(el);
-        var divs = [];
-        $(el).find('.dj-child').each(function(index, child) {
-            // calculate aspect_ratio
-            var ratio = parseInt($(child).attr('data-width')) / parseInt($(child).attr('data-height'));
-            $(child).attr('data-ratio', ratio);
-            divs.push({
-                width: parseInt($(child).attr('data-width')),
-                height: parseInt($(child).attr('data-height')),
-                ratio: ratio
-            });
-        });
+        var divs = this.getSize(el);
         var width = $(el).width();
         if (!height) {
             height = Math.round($(window).height() / 2);
@@ -88,23 +77,44 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
     }
 
     this.getSize = function(el) {
-
+        var divs = [];
+        $(el).find('.dj-child').each(function(index, child) {
+            // calculate aspect_ratio
+            var ratio = parseInt($(child).attr('data-width')) / parseInt($(child).attr('data-height'));
+            $(child).attr('data-ratio', ratio);
+            divs.push({
+                width: parseInt($(child).attr('data-width')),
+                height: parseInt($(child).attr('data-height')),
+                ratio: ratio
+            });
+        });
+        return divs;
     }
 
-    this.go = function($scope, el, attrs) {
+    this.go = function(el, height) {
         // clean the element
         $(el).css('overflow', 'auto');
         $(el).addClass('dj-container');
         $timeout(function () {
-            this.resize(el, $scope.height);
+            this.resize(el, height);
         }.bind(this), 0);
+    }
+
+    this.timerResize = 0;
+    this.onResize = function(el, height) {
+        if (this.timerResize != 0) {
+            clearTimeout(this.timerResize);
+        }
+        this.timerResize = setTimeout(function() {
+            this.go(el, height);
+        }.bind(this), 100);
     }
 
     return {
         restrict: 'A',
         link: function($scope, el, attrs) {
             $scope.$watch("height",function(newValue,oldValue) {
-                this.go($scope, el, attrs);
+                this.go(el, $scope.height);
             }.bind(this));
             // clean the element
             $(el).css('overflow', 'auto');
@@ -114,7 +124,7 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
             }.bind(this), 0);
 
             angular.element($window).bind('resize', function() {
-                this.go($scope, el, attrs);
+                this.onResize(el, $scope.height);
             });
         },
         scope: {
@@ -122,26 +132,3 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
         }
     }
 }]);
-/*
-viewport_width = $(window).width()
-ideal_height = parseInt($(window).height() / 2)
-summed_width = photos.reduce ((sum, p) -> sum += p.get('aspect_ratio') * ideal_height), 0
-rows = Math.round(summed_width / viewport_width)
-
-if rows < 1
-  # (2a) Fallback to just standard size
-  photos.each (photo) -> photo.view.resize parseInt(ideal_height * photo.get('aspect_ratio')), ideal_height
-else
-  # (2b) Distribute photos over rows using the aspect ratio as weight
-  weights = photos.map (p) -> parseInt(p.get('aspect_ratio') * 100)
-  partition = linear_partition(weights, rows)
-
-  # (3) Iterate through partition
-  index = 0
-  row_buffer = new Backbone.Collection
-  _.each partition, (row) ->
-    row_buffer.reset()
-    _.each row, -> row_buffer.add(photos.at(index++))
-    summed_ratios = row_buffer.reduce ((sum, p) -> sum += p.get('aspect_ratio')), 0
-    row_buffer.each (photo) -> photo.view.resize parseInt(viewport_width / summed_ratios * photo.get('aspect_ratio')), parseInt(viewport_width / summed_ratios)
-    */
