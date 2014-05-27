@@ -46,8 +46,10 @@ function notifyLivereload(event) {
 // to gulp
 gulp.task('default', function () {
 
-  startExpress();
-  startLivereload();
-  gulp.watch(['public/**/*.html', 'public/**/*.js', 'public/**/*.css'], notifyLivereload);
-  console.log('Server started on port: ' + EXPRESS_PORT + ' with livereload on port: ' + 35729);
+    startExpress();
+    startLivereload();
+    gulp.watch(['public/**/*.html', 'public/**/*.js', 'public/**/*.css'].on('change', function(file) {
+        lr.changed(file.path);
+    });;
+    console.log('Server started on port: ' + EXPRESS_PORT + ' with livereload on port: ' + 35729);
 });

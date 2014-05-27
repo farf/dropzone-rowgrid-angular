@@ -11,9 +11,7 @@
     display: inline-block;
     *display: inline;
     zoom: 1
-    box-sizing:border-box;
 }
-
 
 .stretch {
     width: 100%;

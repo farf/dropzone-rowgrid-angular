@@ -33,16 +33,19 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
             _.each(partition, function(row) {
                 var indexInLine = 0;
                 var sum_ratios_line = 0;
+                var innerWidth = width;
                 i = index;
                 _.each(row, function(div) {
                     sum_ratios_line += ret[i++].ratio;
+                    innerWidth -= row.outerWidth - row.width;
                 });
                 var sum_ratio = 0;
                 _.each(row, function(photo, i) {
                     $.extend(ret[index], {
                         // difference is a way to remove the problem of one pixel because of round to integer :)
-                        newWidth : parseInt( width / sum_ratios_line * (sum_ratio + ret[index].ratio)) - parseInt( width / sum_ratios_line * sum_ratio),
-                        newHeight : parseInt(width / sum_ratios_line),
+                        newWidth : parseInt( innerWidth / sum_ratios_line * (sum_ratio + ret[index].ratio))
+                                    - parseInt( innerWidth / sum_ratios_line * sum_ratio),
+                        newHeight : parseInt(innerWidth / sum_ratios_line),
                         summedRatios : sum_ratios_line,
                         line: indexLine,
                         indexInLine : indexInLine,
@@ -81,6 +84,10 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
         console.log('execution time: ' + time);
 
         $(el).find('.dj-child').each(function(index, child) {
+
+            //newWidth : parseInt( width / sum_ratios_line * (sum_ratio + ret[index].ratio)) - parseInt( width / sum_ratios_line * sum_ratio),
+            //newHeight : parseInt(width / sum_ratios_line),
+            var widthMargin = ($(el))
             $(child).height(divs[index].newHeight);
             $(child).width(divs[index].newWidth);
         });
@@ -90,11 +97,18 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
         var divs = [];
         $(el).find('.dj-child').each(function(index, child) {
             // calculate aspect_ratio
-            var ratio = parseInt($(child).attr('data-width')) / parseInt($(child).attr('data-height'));
+            var width = $(child).attr('data-width');
+            var outerWidth = $(child).outerWidth();
+            var height = $(child).attr('data-height');
+            var outerHeight = $(child).outerHeight();
+
+            var ratio = width / height;
             $(child).attr('data-ratio', ratio);
             divs.push({
-                width: parseInt($(child).attr('data-width')),
-                height: parseInt($(child).attr('data-height')),
+                width: width,
+                outerWidth: outerWidth,
+                outerHeight: outerHeight,
+                height: height,
                 ratio: ratio
             });
         });
