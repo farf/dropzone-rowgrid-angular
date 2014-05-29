@@ -154,10 +154,10 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
             }
             $(child).css('opacity', 0);
             // calculate aspect_ratio
-            var width = $(child).width();
-            var outerWidth = $(djChild).outerWidth(true);
-            var height = $(child).height();
-            var outerHeight = $(djChild).outerHeight(true);
+            var width = $(djChild).width();
+            var outerWidth = $(child).outerWidth(true);
+            var height = $(djChild).height();
+            var outerHeight = $(child).outerHeight(true);
             var ratio = width / height;
             $(child).attr('data-ratio', ratio);
             divs.push({
