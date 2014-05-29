@@ -128,12 +128,17 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
         console.log('execution time: ' + time);
 
         // resize the div
-        $(el).find('.dj-child').each(function(index, child) {
+        $(el).find('.dj-child-container').each(function(index, child) {
+            if ($(child).is('.dj-child')) {
+                var djChild = child;
+            } else {
+                var djChild = $(child).find('.dj-child:first')[0];
+            }
             if (typeof divs[index] == 'undefined') {
                 alert('ok');
             }
-            $(child).height(divs[index].newHeight);
-            $(child).width(divs[index].newWidth);
+            $(djChild).height(divs[index].newHeight);
+            $(djChild).width(divs[index].newWidth);
             $(child).css('opacity', 1);
         });
     }
@@ -141,13 +146,18 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
     // return the data for the algo: size of the div, ratio...
     this.getSize = function(el) {
         var divs = [];
-        $(el).find('.dj-child').each(function(index, child) {
+        $(el).find('.dj-child-container').each(function(index, child) {
+            if ($(child).is('.dj-child')) {
+                var djChild = child;
+            } else {
+                var djChild = $(child).find('.dj-child:first')[0];
+            }
             $(child).css('opacity', 0);
             // calculate aspect_ratio
             var width = $(child).width();
-            var outerWidth = $(child).outerWidth(true);
+            var outerWidth = $(djChild).outerWidth(true);
             var height = $(child).height();
-            var outerHeight = $(child).outerHeight(true);
+            var outerHeight = $(djChild).outerHeight(true);
             var ratio = width / height;
             $(child).attr('data-ratio', ratio);
             divs.push({
@@ -158,6 +168,7 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
                 ratio: ratio
             });
         });
+
         return divs;
     }
 
