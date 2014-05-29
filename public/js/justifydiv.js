@@ -191,7 +191,7 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
         }
         this.timerResize = setTimeout(function() {
             this.init(el, height);
-        }.bind(this), 100);
+        }.bind(this), 200);
     }
 
     return {
