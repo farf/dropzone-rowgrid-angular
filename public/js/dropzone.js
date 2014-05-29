@@ -11,9 +11,9 @@ angular.module('dropzone', []).directive('ngDropzone', function() {
                     this.on('success', function(file, json) {
                     });
                     this.on('addedfile', function(file) {
-                      scope.$apply(function(){
-                        scope.files.push({file: 'added'});
-                      });
+                        scope.$apply(function(){
+                            scope.files.push({file: 'added'});
+                        });
                     });
                 }
             });

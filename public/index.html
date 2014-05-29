@@ -10,14 +10,15 @@
 
     <body ng-app='myApp' ng-controller="AppCtrl as app">
         <input type='text' ng-model='idealheight' value="100" name='idealheight'/>
-        <div class='dj-container' ng-justify-div height='idealheight'>
+        <div class='dj-container' ng-justify-div height='idealheight' url="#" ng-dropzone>
             <span ng-repeat="image in images">
-                <img class='dj-child'  data-width="{{image.width}}" data-height="{{image.height}}" style="width:{{image.width}}px; height:{{image.height}}" src="http://lorempixel.com/{{image.width * 3}}/{{5*image.height}}/nature/"/>
+                <img class='dj-child'  data-width="{{image.width}}" data-height="{{image.height}}" style="width:{{image.width}}px; height:{{image.height}}px" src="http://lorempixel.com/{{image.width * 3}}/{{5*image.height}}/nature/"/>
             </span>
             <span class="stretch"></span>
         </div>
 
-
+<form action="/file-upload" url="#" ng-dropzone
+      id="my-awesome-dropzone"></form>
     </body>
     <script type="text/javascript" src='vendors/jquery/dist/jquery.min.js'></script>
     <script type="text/javascript" src="vendors/angular/angular.min.js"></script>

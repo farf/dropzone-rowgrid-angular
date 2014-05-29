@@ -10,7 +10,11 @@
     vertical-align: top;
     display: inline-block;
     *display: inline;
-    zoom: 1
+    zoom: 1;
+    margin: 2px;
+    border: 2px solid red;
+    background-color: blue;
+    padding: 2px;
 }
 
 .stretch {

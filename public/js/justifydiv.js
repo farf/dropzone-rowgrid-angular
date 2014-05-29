@@ -14,10 +14,54 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
         if (ret.length == 0) {
             return;
         }
+
+        // Get the ideal number of rows
+        var summed_width = _.reduce(ret, (function(sum, p) {
+            return sum += p.ratio * height;
+        }), 0);
+
+        var rows = Math.round(summed_width / width);
+
+        //Manage the big number of pictures. The algo become too slow with many pictures.
+        var NB_MAX = 10;
+        var newret = [];
+        if (rows > NB_MAX) {
+            // repartition of the divs in batch
+            var numberDivsByRow = Math.floor(divs.length / (Math.floor(rows/NB_MAX)));
+            var batchs = [];
+            var i = 0
+            while (ret.length > 0) {
+                if (i==0) {
+                    batchs.push([]);
+                }
+                var batch = batchs[batchs.length-1];
+                batch.push(ret.shift());
+                i ++;
+                if (i == numberDivsByRow || ret.length == 0) {
+                    newret = newret.concat(this.layoutOneBatch(batch, width, height));
+                    i = 0;
+                }
+            }
+
+        } else {
+            newret = this.layoutOneBatch(ret, width, height);
+        }
+        return newret;
+    }
+
+    this.layoutOneBatch = function(divs, width, height) {
+        var ret = JSON.parse(JSON.stringify(divs));
+        if (ret.length == 0) {
+            return;
+        }
+
+        // Get the ideal number of rows
         var summed_width = _.reduce(ret, (function(sum, p) {
             return sum += p.ratio * height;
         }), 0);
         var rows = Math.round(summed_width / width);
+
+        // Manage the case when it is 1
         if (rows < 1) {
             _.each(ret, function(photo, index) {
                 ret[index].width = parseInt(height * photo.ratio);
@@ -36,8 +80,9 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
                 var innerWidth = width;
                 i = index;
                 _.each(row, function(div) {
-                    sum_ratios_line += ret[i++].ratio;
-                    innerWidth -= row.outerWidth - row.width;
+                    sum_ratios_line += ret[i].ratio;
+                    innerWidth -= ret[i].outerWidth - ret[i].width;
+                    i++;
                 });
                 var sum_ratio = 0;
                 _.each(row, function(photo, i) {
@@ -60,14 +105,11 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
                 return;
             });
         }
-        console.log(ret);
         return ret;
-    }
-
-    this.getWidth = function() {
 
     }
 
+    // Change the size of the children div
     this.resize = function(el, height) {
         var divs = this.getSize(el);
         var width = $(el).width();
@@ -77,31 +119,35 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
 
         var start = new Date().getTime();
 
+        // launch the algo
         divs = this.layout(divs, width, height);
 
+        // log the execution time
         var end = new Date().getTime();
         var time = end - start;
         console.log('execution time: ' + time);
 
+        // resize the div
         $(el).find('.dj-child').each(function(index, child) {
-
-            //newWidth : parseInt( width / sum_ratios_line * (sum_ratio + ret[index].ratio)) - parseInt( width / sum_ratios_line * sum_ratio),
-            //newHeight : parseInt(width / sum_ratios_line),
-            var widthMargin = ($(el))
+            if (typeof divs[index] == 'undefined') {
+                alert('ok');
+            }
             $(child).height(divs[index].newHeight);
             $(child).width(divs[index].newWidth);
+            $(child).css('opacity', 1);
         });
     }
 
+    // return the data for the algo: size of the div, ratio...
     this.getSize = function(el) {
         var divs = [];
         $(el).find('.dj-child').each(function(index, child) {
+            $(child).css('opacity', 0);
             // calculate aspect_ratio
-            var width = $(child).attr('data-width');
-            var outerWidth = $(child).outerWidth();
-            var height = $(child).attr('data-height');
-            var outerHeight = $(child).outerHeight();
-
+            var width = $(child).width();
+            var outerWidth = $(child).outerWidth(true);
+            var height = $(child).height();
+            var outerHeight = $(child).outerHeight(true);
             var ratio = width / height;
             $(child).attr('data-ratio', ratio);
             divs.push({
@@ -115,38 +161,47 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
         return divs;
     }
 
-    this.go = function(el, height) {
+    this.init = function(el, height) {
         // clean the element
         $(el).css('overflow', 'auto');
         $(el).addClass('dj-container');
+        $(el).width('auto');
+        $(el).width($(el).width());
         $timeout(function () {
             this.resize(el, height);
         }.bind(this), 0);
     }
 
+    // Manage the browser resize:
     this.timerResize = 0;
     this.onResize = function(el, height) {
         if (this.timerResize != 0) {
             clearTimeout(this.timerResize);
         }
         this.timerResize = setTimeout(function() {
-            this.go(el, height);
-        }.bind(this), 100);
+            this.init(el, height);
+        }.bind(this), 50);
     }
 
     return {
         restrict: 'A',
         link: function($scope, el, attrs) {
+
+            // watch ideal height
             $scope.$watch("height",function(newValue,oldValue) {
-                this.go(el, $scope.height);
+                this.init(el, $scope.height);
             }.bind(this));
+
             // clean the element
             $(el).css('overflow', 'auto');
             $(el).addClass('dj-container');
+
+            // launch the resize at the end of the render loop
             $timeout(function () {
                 this.resize(el, $scope.height);
             }.bind(this), 0);
 
+            // watch resize of the browser
             angular.element($window).bind('resize', function() {
                 this.onResize(el, $scope.height);
             });
