@@ -26,18 +26,21 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
         var NB_MAX = 10;
         var newret = [];
         if (rows > NB_MAX) {
-            // repartition of the divs in batch
-            var numberDivsByRow = Math.floor(divs.length / (Math.floor(rows/NB_MAX)));
+            // split the divs in batch
+            var numberDivsByBatch = Math.floor(divs.length / (Math.floor(rows/NB_MAX)));
             var batchs = [];
             var i = 0
             while (ret.length > 0) {
-                if (i==0) {
+                // We don't want to have a small last batch, we prefer having a big one.
+                // So we don't create the last batch and mix it with the previous one
+                // The best way to do that would be to use linearpartition to create batch but it would have taken time.
+                if (i==0 && batchs.length != Math.floor(divs.length/rows) + 1) {
                     batchs.push([]);
                 }
                 var batch = batchs[batchs.length-1];
                 batch.push(ret.shift());
                 i ++;
-                if (i == numberDivsByRow || ret.length == 0) {
+                if (i == numberDivsByBatch || ret.length == 0) {
                     newret = newret.concat(this.layoutOneBatch(batch, width, height));
                     i = 0;
                 }
