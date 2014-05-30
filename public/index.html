@@ -10,7 +10,7 @@
 
     <body ng-app='myApp' ng-controller="AppCtrl as app">
         <input type='text' ng-model='idealheight' value="100" name='idealheight'/>
-        <div class='dj-container' ng-justify-div height='idealheight' url="#" ng-dropzone>
+        <div class='dj-container' ng-justify-div height='idealheight' url="#" ng-dropzone justify="alert('ok')">
             <span ng-repeat="image in images">
                 <img class='dj-child dj-child-container'  data-width="{{image.width}}" data-height="{{image.height}}" style="width:{{image.width}}px; height:{{image.height}}px" src="http://lorempixel.com/{{image.width * 3}}/{{5*image.height}}/nature/"/>
             </span>

@@ -206,14 +206,22 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
                 this.init(el, $scope.height);
             }.bind(this));
 
+            $scope.$watch(function() {
+                return el.children().length;
+            }, function(oldValue, newValue) {
+                if (oldValue !== newValue) {
+                    this.init(el, $scope.height);
+                }
+            }.bind(this));
+
             // clean the element
-            $(el).css('overflow', 'auto');
-            $(el).addClass('dj-container');
+            el.css('overflow', 'auto');
+            el.addClass('dj-container');
 
             // launch the resize at the end of the render loop
-            $timeout(function () {
+            //$timeout(function () {
                 this.resize(el, $scope.height);
-            }.bind(this), 0);
+            //}.bind(this), 0);
 
             // watch resize of the browser
             angular.element($window).bind('resize', function() {
