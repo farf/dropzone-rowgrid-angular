@@ -176,6 +176,7 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
     }
 
     this.init = function(el, height) {
+        this.resizing = true;
         // clean the element
         $(el).css('overflow', 'auto');
         $(el).addClass('dj-container');
@@ -183,6 +184,7 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
         $(el).width($(el).width());
         $timeout(function () {
             this.resize(el, height);
+            this.resizing = false;
         }.bind(this), 0);
     }
 
@@ -196,6 +198,8 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
             this.init(el, height);
         }.bind(this), 200);
     }
+
+    this.resizing = false;
 
     return {
         restrict: 'A',
@@ -213,7 +217,9 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
                 })
             }, function(oldValue, newValue) {
                 if (oldValue !== newValue) {
-                    this.init(el, $scope.height);
+                    if (!this.resizing) {
+                        this.init(el, $scope.height);
+                    }
                 }
             }.bind(this));
 
