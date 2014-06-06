@@ -206,6 +206,17 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
                 this.init(el, $scope.height);
             }.bind(this));
 
+            // watch children size
+            $scope.$watchCollection(function() {
+                return [].map.call(el.find('.dj-child'), function (child) {
+                    return $(child).width();
+                })
+            }, function(oldValue, newValue) {
+                if (oldValue !== newValue) {
+                    this.init(el, $scope.height);
+                }
+            }.bind(this));
+
             $scope.$watch(function() {
                 return el.children().length;
             }, function(oldValue, newValue) {

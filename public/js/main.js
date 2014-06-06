@@ -11,5 +11,11 @@ app.controller("AppCtrl", ['$scope', '$timeout', function($scope, $timeout) {
             $scope.images.push({id: i, height: 100, width: Math.round(Math.random()*300)});
         }
     }, 2000);
+    $timeout(function() {
+
+        $scope.images[0].width = 100;
+
+
+    }, 4000);
     var app = this;
 }]);
