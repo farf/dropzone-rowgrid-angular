@@ -150,14 +150,14 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
             if (!$(child).is('[data-width]')) {
                 $(child).attr('data-width', width);
             }
-            var initialWidth = $(child).attr('data-width');
+            var initialWidth = parseInt($(child).attr('data-width'), 10);
 
             var height = $(djChild).height();
             var outerHeight = $(child).outerHeight(true);
             if (!$(child).is('[data-height]')) {
                 $(child).attr('data-height', width);
             }
-            var initialHeight = $(child).attr('data-height');
+            var initialHeight = parseInt($(child).attr('data-height'), 10);
 
             var ratio = initialWidth / initialHeight;
             $(child).attr('data-ratio', ratio);
