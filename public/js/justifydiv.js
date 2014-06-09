@@ -1,13 +1,4 @@
 angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout', 'linearPartition', function($window, $timeout, linearPartition) {
-    this.containerHeight = 0;
-    this.checkForChanges = function(el) {
-        if ($(el).height() != containerHeight) {
-            this.containerHeight = $(el).height();
-            this.resize();
-            alert('ok');
-        }
-        setTimeout(checkForChanges, 200);
-    }.bind(this);
 
     this.layout = function(divs, width, height) {
         var ret = JSON.parse(JSON.stringify(divs));
@@ -137,9 +128,6 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
             } else {
                 var djChild = $(child).find('.dj-child:first')[0];
             }
-            if (typeof divs[index] == 'undefined') {
-                alert('ok');
-            }
             $(djChild).height(divs[index].newHeight);
             $(djChild).width(divs[index].newWidth);
             $(child).css('opacity', 1);
@@ -159,9 +147,19 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
             // calculate aspect_ratio
             var width = $(djChild).width();
             var outerWidth = $(child).outerWidth(true);
+            if (!$(child).is('[data-width]')) {
+                $(child).attr('data-width', width);
+            }
+            var initialWidth = $(child).attr('data-width');
+
             var height = $(djChild).height();
             var outerHeight = $(child).outerHeight(true);
-            var ratio = width / height;
+            if (!$(child).is('[data-height]')) {
+                $(child).attr('data-height', width);
+            }
+            var initialHeight = $(child).attr('data-height');
+
+            var ratio = initialWidth / initialHeight;
             $(child).attr('data-ratio', ratio);
             divs.push({
                 width: width,
@@ -205,19 +203,23 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
         restrict: 'A',
         link: function($scope, el, attrs) {
 
+            console.log('link');
+
             // watch ideal height
             $scope.$watch("height",function(newValue,oldValue) {
+                console.log('watch height');
                 this.init(el, $scope.height);
             }.bind(this));
 
             // watch children size
             $scope.$watchCollection(function() {
                 return [].map.call(el.find('.dj-child'), function (child) {
-                    return $(child).width();
+                    return $(child).attr('data-width');
                 })
             }, function(oldValue, newValue) {
                 if (oldValue !== newValue) {
                     if (!this.resizing) {
+                        console.log('watch width');
                         this.init(el, $scope.height);
                     }
                 }
@@ -227,6 +229,7 @@ angular.module('justifydiv', []).directive('ngJustifyDiv', ['$window', '$timeout
                 return el.children().length;
             }, function(oldValue, newValue) {
                 if (oldValue !== newValue) {
+                    console.log('watch children length');
                     this.init(el, $scope.height);
                 }
             }.bind(this));

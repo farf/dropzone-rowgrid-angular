@@ -9,6 +9,10 @@
     </head>
 
     <body ng-app='myApp' ng-controller="AppCtrl as app">
+
+        <div>
+        {{images}}
+        </div>
         <input type='text' ng-model='idealheight' value="100" name='idealheight'/>
         <div class='dj-container' ng-justify-div height='idealheight' url="#" ng-dropzone justify="alert('ok')">
             <span ng-repeat="image in images">
